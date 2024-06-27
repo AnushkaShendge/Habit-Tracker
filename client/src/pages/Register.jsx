@@ -23,7 +23,7 @@ function Register() {
         }
     }
     if(redirect){
-        return <Navigate to='/home' />
+        return <Navigate to='/dashboard' />
     }
  
     return (

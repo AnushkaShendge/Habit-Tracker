@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import loginImg from '../assets/Habit-Tracker.jpg';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
-import { Link } from 'react-router-dom';
+import { Link , Navigate } from 'react-router-dom';
 import axios from 'axios'
 
 function Login() {
@@ -22,7 +22,7 @@ function Login() {
         }
     }
     if(redirect){
-        return <Navigate to='/home' />
+        return <Navigate to='/dashboard' />
     }
 
     return (

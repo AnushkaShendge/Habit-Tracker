@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const User = require('./model/user');
+const Habit = require('./model/habit')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -77,6 +78,75 @@ app.get('/user', async (req, res) => {
         });
     } else {
         res.json(null);
+    }
+});
+
+app.post('/habit' , async(req,res) => {
+    const { title, description, date } = req.body;
+
+    if (!title || !description) {
+        return res.status(400).json({ message: 'Title and description are required' });
+    }
+
+    try {
+        const newHabit = new Habit({
+            title,
+            description,
+            date: date ? new Date(date) : new Date(),
+            completed: false
+        });
+
+        const savedHabit = await newHabit.save();
+        res.status(201).json(savedHabit);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+})
+
+app.get('/habit' , async(req,res) => {
+    const date = new Date(req.query.date);
+    try {
+        const habits = await Habit.find({ date: date, completed: false });
+        const completedHabits = await Habit.find({ date: date, completed: true });
+        res.json({ habits, completedHabits });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+})
+app.post('/habit/:id/complete' , async(req , res) => {
+    const {id} = req.params
+    const habitDoc = await Habit.findById(id)
+    habitDoc.completed = true
+    habitDoc.save()
+    res.json(habitDoc)
+})
+app.get('/stats', async (req, res) => {
+    try {
+        const habits = await Habit.find();
+
+        const dates = [];
+        const scheduledHabits = [];
+        const completedHabits = [];
+
+        habits.forEach(habit => {
+            const date = habit.date.toISOString().split("T")[0];
+            if (!dates.includes(date)) {
+                dates.push(date);
+                scheduledHabits.push(0);
+                completedHabits.push(0);
+            }
+
+            const dateIndex = dates.indexOf(date);
+            scheduledHabits[dateIndex]++;
+
+            if (habit.completed) {
+                completedHabits[dateIndex]++;
+            }
+        });
+
+        res.json({ dates, scheduledHabits, completedHabits });
+    } catch (error) {
+        res.status(500).send(error);
     }
 });
 

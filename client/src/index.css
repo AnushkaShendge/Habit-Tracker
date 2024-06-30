@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+:root {
+    --primary-bg-color: #ffffff;
+    --primary-text-color: #000000;
+    --secondary-bg-color: #f0f0f0;
+    --secondary-text-color: #333333;
+}
+
+[data-theme="dark"] {
+    --primary-bg-color: #121212;
+    --primary-text-color: #ffffff;
+    --secondary-bg-color: #1e1e1e;
+    --secondary-text-color: #bbbbbb;
+}

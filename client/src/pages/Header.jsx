@@ -5,16 +5,15 @@ import { FaMoon } from "react-icons/fa";
 import { FiSun } from "react-icons/fi";
 import {  Navigate } from "react-router-dom";
 import { IoIosSearch } from "react-icons/io";
+import { ThemeContext } from "../ThemeContext";
+
 
 function Header() {
     const { user } = useContext(UserContext);
-    const [dark, setDark] = useState(false);
-
-    function toggleTheme() {
-        setDark(!dark);
-    }
+    const { theme, toggleTheme } = useContext(ThemeContext);
     return (
-        <div className="shadow-md p-4 flex justify-between items-center bg-purple-100">
+        
+        <div className="shadow-md p-4 flex justify-between items-center bg-purple-100 fixed w-full top-0">
             <div>
                 <h1 className="text-2xl font-bold">Hi there, {!!user && (
                     <span className="font-extrabold text-purple-400">{user.username}</span>
@@ -29,7 +28,7 @@ function Header() {
                 </div>
                 <div className="ml-4 flex items-center space-x-4 m-4">
                     <IoSettings size={24} onClick={() =>{ <Navigate to='/setting' />}} />
-                    {dark ? (
+                    {theme === 'dark' ? (
                         <FaMoon size={24} onClick={toggleTheme} className="cursor-pointer" />
                     ) : (
                         <FiSun size={24} onClick={toggleTheme} className="cursor-pointer" />

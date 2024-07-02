@@ -30,7 +30,6 @@ function Dashboard() {
         try {
             const res = await axios.get(`http://localhost:4000/habit?date=${formattedDate}`);
             setHabits(res.data.habits);
-            console.log(res.data.habits);
             setCompletedHabits(res.data.completedHabits);
         } catch (error) {
             console.error(error);
@@ -45,7 +44,7 @@ function Dashboard() {
     }
 
     const completeHabit = (habitId) => {
-        axios.put(`http://localhost:4000/habits/${habitId}/complete`)
+        axios.post(`http://localhost:4000/habit/${habitId}/complete`)
             .then(() => {
                 fetchHabits(currentDate);
             })
@@ -77,12 +76,12 @@ function Dashboard() {
                     <SidebarItem icon={<MdDashboard size={20} />} text="Dashboard" active />
                     <SidebarItem icon={<IoStatsChartSharp size={20} />} text="Statistics" to="/dashboard/statistics" alert />
                     <SidebarItem icon={<SlCalender size={20} />} text="Calendar" to="/dashboard/calendar" />
-                    <SidebarItem icon={<MdOutlineTaskAlt size={20} />} text="Tasks" to="/dashboard/tasks" />
+                    <SidebarItem icon={<MdOutlineTaskAlt size={20} />} text="Cummunity" to="/dashboard/post" />
                     <hr className="my-3" />
                     <SidebarItem icon={<IoSettings size={20} />} text="Settings" to="/dashboard/settings" />
                     <SidebarItem icon={<IoMdHelp size={20} />} text="Help" to="/dashboard/help" />
                 </Sidebar>
-                <div className={`h-screen w-full transition-all duration-300 mt-20 ${theme === 'light' ? '' : 'bg-gray-900 text-white'} ${sidebarOpen ? 'ml-[270px]' : 'ml-16'}`}>
+                <div className={`w-full transition-all duration-300 mt-20 ${theme === 'light' ? '' : 'bg-gray-900 text-white'} ${sidebarOpen ? 'ml-[270px]' : 'ml-16'}`}>
                     <header className="border border-lg shadow-sm flex m-10 p-8 rounded-lg items-center gap-6">
                         <h1 className="text-xl font-semibold">{currentDate.toDateString()}</h1>
                         <div className="mr-auto">
@@ -103,7 +102,7 @@ function Dashboard() {
                             )}
                         </div>
                     </div>
-                    <div className="border border-lg shadow-sm flex flex-col m-10 p-8 rounded-lg">
+                    <div className={`border border-lg shadow-sm flex flex-col m-10 p-8 rounded-lg ${theme === 'light' ? '' : 'bg-gray-900 text-white'}`}>
                         <h2 className="text-2xl text-purple-300 font-light text-center mb-4">Habits Completed</h2>
                         <div className={completedHabits.length > 0 ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" : "flex justify-center items-center h-full"}>
                             {completedHabits.length > 0 ? (

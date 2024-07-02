@@ -3,6 +3,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const User = require('./model/user');
 const Habit = require('./model/habit')
+const Post = require('./model/post');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -149,6 +150,39 @@ app.get('/stats', async (req, res) => {
         res.status(500).send(error);
     }
 });
+
+app.post('/post' , async(req,res) => {
+    const { content } = req.body
+    const {token} = req.cookies;
+    if(token){
+        jwt.verify(token, jwtSec, {} , async (err, decoded) => {
+            if (err) {
+                console.error('Error verifying token:', err);
+                return res.status(401).json({ error: 'Unauthorized' });
+            }
+            try {
+                const postDoc = new Post({
+                    content,
+                    user: decoded.userId,
+                    date: new Date(),
+                });
+                const post = await postDoc.save();
+                res.status(201).json(post);
+            } catch (error) {
+                res.status(500).json({ message: error.message });
+            }
+        });
+    }
+}) 
+
+app.get('/post' , async(req,res) => {
+    try {
+        const posts = await Post.find().sort({ date: -1 }).populate('user');
+        res.json(posts);
+    }catch{
+        res.status(500).json({ message: error.message });
+    }
+})
 
 app.listen(4000, () => {
     console.log('Server is running on port 4000');

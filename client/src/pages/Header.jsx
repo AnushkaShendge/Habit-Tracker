@@ -26,12 +26,12 @@ function Header() {
                     <IoIosSearch size={24} className="absolute top-0 left-0 mt-2 ml-3 text-gray-400" />
                     <input type="text" placeholder=" Search..." className="border rounded-full pl-10 pr-4 py-2 w-full" />
                 </div>
-                <div className="ml-4 flex items-center space-x-4 m-4">
-                    <IoSettings size={24} onClick={() =>{ <Navigate to='/setting' />}} />
+                <div className="ml-4 flex items-center space-x-4 m-4 cursor-pointer">
+                    
                     {theme === 'dark' ? (
-                        <FaMoon size={24} onClick={toggleTheme} className="cursor-pointer" />
+                        <FaMoon size={24} onClick={toggleTheme}  />
                     ) : (
-                        <FiSun size={24} onClick={toggleTheme} className="cursor-pointer" />
+                        <FiSun size={24} onClick={toggleTheme}  />
                     )}
                 </div>
             </div>

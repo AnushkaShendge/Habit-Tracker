@@ -3,17 +3,27 @@ import { LuListTodo, LuChevronFirst, LuChevronLast } from "react-icons/lu";
 import { UserContext } from "../UserContext";
 import { AiOutlineMore } from "react-icons/ai";
 import { FaUserCircle } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 const SidebarContext = createContext();
 
 function Sidebar({ children, isOpen, toggleSidebar }) {
     const { user } = useContext(UserContext);
     const [expanded, setExpanded] = useState(isOpen);
+    const [isDropdownOpen , setIsDropdownOpen ] = useState(false)
+    const [toLogin , setToLogin] = useState(false)
 
     useEffect(() => {
         setExpanded(isOpen);
     }, [isOpen]);
+
+    async function handleLogout() {
+        await axios.post('http://localhost:4000/logout')
+        setToLogin(true);
+    }
+    if (toLogin){
+        return <Navigate to="/" />
+    }
 
     return (
         <>
@@ -34,6 +44,11 @@ function Sidebar({ children, isOpen, toggleSidebar }) {
                             {children}
                         </ul>
                     </SidebarContext.Provider>
+                    {isDropdownOpen && (
+                        <div className="absolute top-[-40px] right-0 bg-violet-100 rounded-lg shadow-lg p-2 my-[405px] w-full">
+                            <button className="rounded-lg shadow-lg p-2 w-full text-sm" onClick={handleLogout}>Logout</button>
+                        </div>
+                    )}
                     <div className="border-t flex p-3">
                         <FaUserCircle size={26} className="" />
                         <div className={`flex justify-between items-center overflow-hidden ml-3 transition-all ${expanded ? "w-52 ml-3" : "w-0"}`}>
@@ -45,9 +60,9 @@ function Sidebar({ children, isOpen, toggleSidebar }) {
                                     </>
                                 )}
                             </div>
-                            <div>
-                                <button>
-                                    <AiOutlineMore className="text-2xl" />
+                            <div className="relative flex flex-col items-center ">
+                                <button className="cursor-pointer">
+                                    <AiOutlineMore className="text-2xl duration-300 active:text-white" onClick={() => setIsDropdownOpen(!isDropdownOpen)} />
                                 </button>
                             </div>
                         </div>

@@ -184,6 +184,89 @@ app.get('/post' , async(req,res) => {
     }
 })
 
+app.post('/update-profile' , async(req,res) => {
+    const { username , email } = req.body
+    const {token} = req.cookies;
+    if(token){
+        jwt.verify(token, jwtSec, {} , async (err, decoded) => {
+            if (err) {
+                console.error('Error verifying token:', err);
+                return res.status(401).json({ error: 'Unauthorized' });
+            }
+            try {
+                const user = await User.findOne({ _id: decoded.userId });
+                user.username = username;
+                user.email = email;
+                const userDoc = await user.save();
+                res.status(201).json(userDoc);
+            } catch (error) {
+                res.status(500).json({ message: error.message });
+            }
+        });
+    }
+})
+
+app.post('/change-password' , async(req,res) => {
+    const {oldPassword ,  newPassword } = req.body
+    const {token} = req.cookies;
+    if(token){
+        jwt.verify(token, jwtSec, {} , async (err, decoded) => {
+            if (err) {
+                console.error('Error verifying token:', err);
+                return res.status(401).json({ error: 'Unauthorized' });
+            }
+            try {
+                const user = await User.findOne({ _id: decoded.userId });
+                const passwordMatch = bcrypt.compareSync(oldPassword, user.password);
+
+                if (!passwordMatch) {
+                    return res.status(400).json({ message: 'Incorrect old password' });
+                }
+
+                user.password = bcrypt.hashSync(newPassword, bcryptSalt);
+                await user.save();
+                res.json({ message: 'Password updated successfully' });
+            } catch (error) {
+                res.status(500).json({ message: error.message });
+            }
+        });
+    }
+})
+app.get('/help', (req, res) => {
+    const helpContent = {
+        overview: "The Habit Tracker website is designed to help users track their daily habits, set reminders, and view their progress over time. Users can also post their thoughts, which can be seen by other logged-in users.",
+        features: {
+            userAuthentication: [
+                "Register: Users can create an account using their username, email, and password.",
+                "Login: Registered users can log in using their email and password.",
+                "Token Management: JWT tokens are used for authentication, stored as cookies."
+            ],
+            habitManagement: [
+                "Add Habit: Users can add a new habit with a title, description, and date.",
+                "View Habits: Users can view their habits scheduled for the current day.",
+                "Complete Habit: Users can mark a habit as completed.",
+                "Statistics: Users can view statistics of their habits, including scheduled and completed habits."
+            ],
+            userPosts: [
+                "Add Post: Users can post their thoughts, which will be visible to other logged-in users.",
+                "View Posts: Users can view posts from all users."
+            ],
+            settingsPage: [
+                "Theme Switcher: Users can toggle between light and dark themes.",
+                "Profile Management: Users can update their profile details such as username and email."
+            ]
+        },
+        furtherQueries: "For any further queries, you can contact the owner of the Habit Tracker website at: anushkashendge5@gmail.com"
+    };
+
+    res.json(helpContent);
+});
+
+app.post('/logout', async (req, res) => {
+    res.cookie('token', '').json(true);
+});
+
+
 app.listen(4000, () => {
     console.log('Server is running on port 4000');
 });

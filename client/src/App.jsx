@@ -11,6 +11,8 @@ import Statistics from './pages/Statistics'
 import Calendar from './pages/Calendar'
 import HomePage from './pages/Home'
 import Cummunity from './pages/Cummunity'
+import Settings from './pages/Settings'
+import Help from './pages/Help'
 
 axios.defaults.baseURL = 'http://127.0.0.1:4000'
 axios.defaults.withCredentials = true;
@@ -27,6 +29,8 @@ function App() {
           <Route path="/dashboard/calendar" element={<Calendar />} />
           <Route path="/dashboard/home" element={<HomePage />} />
           <Route path="/dashboard/post" element={<Cummunity />} />
+          <Route path="/dashboard/settings" element={<Settings />} />
+          <Route path="/dashboard/help" element={<Help />} />
         </Routes>
       </UserContextProvider>
   )
